@@ -2,14 +2,8 @@
 
 import sys # for handeling arguments
 import requests
-import json
 import csv
 
-import platform    # For getting the operating system name
-import subprocess
-from requests import status_codes
-
-from requests.models import Response  # For executing a shell command
 
 # Reading in the API keys 
 
@@ -78,7 +72,7 @@ def ipqs(ip):
     print()
 
 
-
+# ipinfo.com
 def ipinfo(ip): 
     if ipinfo_pro_key == "": 
         return
