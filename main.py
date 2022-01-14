@@ -7,7 +7,7 @@ import csv
 # Colors 
 
 class bcolors:
-    YELLOW = '\033[95m'
+    SERVICE_TITLE = '\033[95m'
     OKBLUE = '\033[94m'
     OKCYAN = '\033[96m'
     OKGREEN = '\033[92m'
@@ -52,7 +52,7 @@ def ipqs(ip):
 
     # Printing output 
     # print("ipqualityscore.com")
-    print(f"{bcolors.YELLOW}www.ipqualityscore.com{bcolors.ENDC}")
+    print(f"{bcolors.SERVICE_TITLE}www.ipqualityscore.com{bcolors.ENDC}")
 
     print("------------------------------------------------------------")
 
@@ -97,7 +97,7 @@ def ipinfo(ip):
     result = requests.get(ipinfo_url)
 
     # print("IPInfo.com")
-    print(f"{bcolors.YELLOW}www.IPInfo.com{bcolors.ENDC}")
+    print(f"{bcolors.SERVICE_TITLE}www.IPInfo.com{bcolors.ENDC}")
     print("------------------------------------------------------------")
     if result.status_code == 200: 
         # Printing output 
@@ -182,7 +182,7 @@ def AbuseIPDP(ip):
 
     # Printing output 
     # print("www.abuseipdb.com")
-    print(f"{bcolors.YELLOW}www.abuseipdb.com{bcolors.ENDC}")
+    print(f"{bcolors.SERVICE_TITLE}www.abuseipdb.com{bcolors.ENDC}")
 
     print("------------------------------------------------------------")
     if response.status_code == 200:
@@ -212,7 +212,7 @@ def gipi(ip):
 
     # Printing output 
     # print("www.getipintel.net")
-    print(f"{bcolors.YELLOW}www.getipintel.net{bcolors.ENDC}")
+    print(f"{bcolors.SERVICE_TITLE}www.getipintel.net{bcolors.ENDC}")
 
     print("------------------------------------------------------------")
     try: 
