@@ -3,6 +3,8 @@
 import sys # for handeling arguments
 import requests
 import csv
+import socket
+
 
 # Colors 
 
@@ -231,19 +233,49 @@ def gipi(ip):
     print()
 
 
+
+def ipCheck(ip):
+
+    if ip.lower() == "exit": 
+        return False 
+
+    try:
+        socket.inet_aton(ip) # Checks to see if the IP is valid 
+        # legal
+    except socket.error:
+        # Not legal
+        return True 
+
+    return False 
+
+
+# Mode that allows the user to enter a new IP repeatedly 
+
 if sys.argv[1] == "i": # enter interactive mode
 
     print("Interactive mode. type 'EXIT' to exit")
     while(True): 
+
         ip = input("Enter IP: ")
+
+        # Make sure the IP address is valid 
+        skip = False 
+        skip = ipCheck(ip)
 
         if ip.lower() == "exit": 
             break
-        else: 
+        
+        if skip == False: 
+
+            # print("IP is valid")
+
             ipqs(ip)
             ipinfo(ip)
             AbuseIPDP(ip)
             gipi(ip)
+
+        else: 
+            print("IP invalid")
 
             
 
