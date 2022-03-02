@@ -34,6 +34,40 @@ with open('keys.csv', newline='') as csvfile:
         if row['name'] == "AbuseIPDB": AbuseIPDB_key = row['key']
 
 
+# Section for the History feature 
+
+history_file_name = "History.txt"
+
+history = []
+
+
+# Get the known IP addresses from a file 
+def get_history(): 
+    try: 
+        with open(history_file_name, newline='') as ip_file: 
+            result = ip_file.readlines()
+            stripped_result = []
+            for ip in result: 
+                stripped_result.append(ip.strip()) # Gotta remove those annoying '\n's 
+
+        return stripped_result
+
+    except: 
+        # Need to create the file here if it doesn't work 
+        open(history_file_name, 'a').close()
+
+        get_history()
+
+
+
+
+# Add an IP address to history (array, and file)
+def add_ip_to_history(IP): 
+    history.append(IP)
+    history_file = open(history_file_name, 'a')
+    history_file.write(IP + "\n")
+
+    history_file.close() # Good boys close their files 
 
 # www.ipqualityscore.com
 def ipqs(ip):
@@ -159,7 +193,6 @@ def ipinfo(ip):
     print()
     print()
     
-
 # www.abuseipdb.com
 def AbuseIPDP(ip): 
 
@@ -215,7 +248,6 @@ def gipi(ip):
     # Printing output 
     # print("www.getipintel.net")
     print(f"{bcolors.SERVICE_TITLE}www.getipintel.net{bcolors.ENDC}")
-
     print("------------------------------------------------------------")
     try: 
         if response.status_code == 200: 
@@ -232,8 +264,7 @@ def gipi(ip):
     print()
     print()
 
-
-
+# Check the IP address is Valid 
 def ipCheck(ip):
 
     if ip.lower() == "exit": 
@@ -248,6 +279,21 @@ def ipCheck(ip):
 
     return False 
 
+# Checks how many times the IP address has been checked
+def historyCheck(ip): 
+    print(f"{bcolors.SERVICE_TITLE}History{bcolors.ENDC}")
+    print("------------------------------------------------------------")
+    count = get_history().count(ip)
+
+    print("This IP has been checked " + str(count) + " times")
+    print("")
+    
+
+
+
+
+# Gets the history and stores it in RAM 
+history = get_history()
 
 # Mode that allows the user to enter a new IP repeatedly 
 
@@ -267,17 +313,38 @@ if sys.argv[1] == "i": # enter interactive mode
         
         if skip == False: 
 
-            # print("IP is valid")
+            add_ip_to_history(ip)
 
             ipqs(ip)
             ipinfo(ip)
             AbuseIPDP(ip)
             gipi(ip)
+            historyCheck(ip)
 
+
+            
         else: 
             print("IP invalid")
 
-            
+# Dumps the known IP addresses 
+if sys.argv[1] == "dump": 
+    print(get_history())
+
+    
+
+if sys.argv[1] == "test":
+
+    add_ip_to_history("Test 1")
+    add_ip_to_history("Test 2")
+    add_ip_to_history("Test 3")
+    add_ip_to_history("Test 4")
+
+
+    print(get_history())
+    
+
+    print(historyCheck("1.1.1.1"))
+
 
 else:
     ip = sys.argv[1] # set the IP as the first argument 
@@ -286,6 +353,8 @@ else:
     ipinfo(ip)
     AbuseIPDP(ip)
     gipi(ip)
+
+    add_ip_to_history(ip)
 
 
 
