@@ -4,6 +4,7 @@ import sys # for handeling arguments
 import requests
 import csv
 import socket
+import pycountry
 
 
 # Colors 
@@ -84,8 +85,6 @@ def ipqs(ip):
 
     result = requests.get(ipqs_URL)
 
-
-
     # Printing output 
     # print("ipqualityscore.com")
     print(f"{bcolors.SERVICE_TITLE}www.ipqualityscore.com{bcolors.ENDC}")
@@ -95,12 +94,16 @@ def ipqs(ip):
 
     if result.status_code == 200: 
         if result.json()["success"] == True: 
+
+            country_name = pycountry.countries.get(alpha_2=str(result.json()["country_code"])).name
+
+
             print("VPN:             " + str(result.json()["vpn"]))
             print("Fraud Score:     " + str(result.json()["fraud_score"]))
             print("Recent Abuse:    " + str(result.json()["recent_abuse"]))
 
 
-            print("country_code:    " + str(result.json()["country_code"]))
+            print("country_code:    " + str(result.json()["country_code"]) + " ( " + country_name + " )")
             print("region:          " + str(result.json()["region"]))
             print("city:            " + str(result.json()["city"]))
             print("ISP:             " + str(result.json()["ISP"]))
@@ -138,11 +141,9 @@ def ipinfo(ip):
     if result.status_code == 200: 
         # Printing output 
 
-
-        # print(str(result.json()))
-
-        try:     print("country:    " + str(result.json()["country"]))
-        except: pass
+        
+        try:     print("country:    " + str(result.json()["country"])  + " ( " + pycountry.countries.get(alpha_2=str(result.json()["country"])).name + " ) ")
+        except: pass # I know, that was horribile
 
         try:     print("region:     " + str(result.json()["region"]))
         except: pass
@@ -221,11 +222,13 @@ def AbuseIPDP(ip):
 
     print("------------------------------------------------------------")
     if response.status_code == 200:
+
+        country_name = pycountry.countries.get(alpha_2=str(response.json()["data"]["countryCode"])).name
         
         print("hostnames:       " + str(response.json()["data"]["hostnames"]))
         print("Abuse score:     " + str(response.json()["data"]["abuseConfidenceScore"]))
         print("usageType        " + str(response.json()["data"]["usageType"]))
-        print("Country code:    " + str(response.json()["data"]["countryCode"]))
+        print("Country code:    " + str(response.json()["data"]["countryCode"]) + " ( " + country_name + " )")
         print("ISP:             " + str(response.json()["data"]["isp"]))
         print("totalReports:    " + str(response.json()["data"]["totalReports"]))
         print("Last report:     " + str(response.json()["data"]["lastReportedAt"]))
@@ -250,9 +253,14 @@ def gipi(ip):
     print(f"{bcolors.SERVICE_TITLE}www.getipintel.net{bcolors.ENDC}")
     print("------------------------------------------------------------")
     try: 
+
+        country_name = pycountry.countries.get(alpha_2= str(response.json()["Country"])).name
+
+
+
         if response.status_code == 200: 
             print("Abuse score:         " + str(response.json()["result"]))
-            print("Country Code:        " + str(response.json()["Country"]))
+            print("Country Code:        " + str(response.json()["Country"]) + " ( " + country_name + " )")
             print("iCloud relay:        " + str(response.json()["iCloudRelayEgress"]))
             print("Bad IP:              " + str(response.json()["BadIP"]))
         else: 
