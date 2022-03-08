@@ -141,9 +141,14 @@ def ipinfo(ip):
     if result.status_code == 200: 
         # Printing output 
 
-        
-        try:     print("country:    " + str(result.json()["country"])  + " ( " + pycountry.countries.get(alpha_2=str(result.json()["country"])).name + " ) ")
-        except: pass # I know, that was horribile
+
+        country_string = ""
+
+        try: country_string = " ( " + pycountry.countries.get(alpha_2=str(result.json()["country"])).name + " ) "
+        except: pass
+
+        try:     print("country:    " + str(result.json()["country"])  + country_string )
+        except: pass
 
         try:     print("region:     " + str(result.json()["region"]))
         except: pass
@@ -305,6 +310,19 @@ history = get_history()
 
 # Mode that allows the user to enter a new IP repeatedly 
 
+# Exits the program, rather than error if you don't give it any args
+if len(sys.argv) == 1: 
+    print("Argument not found")
+    print()
+    print("Enter an IP address to look up that IP address")
+    print("Enter 'i' to enter interactive mode")
+    print("Enter 'dump' to see the history")
+    print()
+    exit()
+
+
+print(sys.argv)
+
 if sys.argv[1] == "i": # enter interactive mode
 
     print("Interactive mode. type 'EXIT' to exit")
@@ -337,21 +355,6 @@ if sys.argv[1] == "i": # enter interactive mode
 # Dumps the known IP addresses 
 if sys.argv[1] == "dump": 
     print(get_history())
-
-    
-
-if sys.argv[1] == "test":
-
-    add_ip_to_history("Test 1")
-    add_ip_to_history("Test 2")
-    add_ip_to_history("Test 3")
-    add_ip_to_history("Test 4")
-
-
-    print(get_history())
-    
-
-    print(historyCheck("1.1.1.1"))
 
 
 else:
