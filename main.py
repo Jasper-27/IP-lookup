@@ -4,10 +4,10 @@ import sys # for handeling arguments
 import requests
 import csv
 import socket
+import pycountry
 
 
 # Colors 
-
 class bcolors:
     SERVICE_TITLE = '\033[95m'
     OKBLUE = '\033[94m'
@@ -58,9 +58,6 @@ def get_history():
 
         get_history()
 
-
-
-
 # Add an IP address to history (array, and file)
 def add_ip_to_history(IP): 
     history.append(IP)
@@ -80,11 +77,7 @@ def ipqs(ip):
     ipqs_args = "?strictness=0&allow_public_access_points=true&fast=true&lighter_penalties=true&mobile=true"
 
     ipqs_URL = ipqs_baseURL + ipqs_key + "/" + ip + "/" + ipqs_args
-
-
     result = requests.get(ipqs_URL)
-
-
 
     # Printing output 
     # print("ipqualityscore.com")
@@ -92,15 +85,16 @@ def ipqs(ip):
 
     print("------------------------------------------------------------")
 
-
     if result.status_code == 200: 
         if result.json()["success"] == True: 
+
+            country_name = pycountry.countries.get(alpha_2=str(result.json()["country_code"])).name
+
             print("VPN:             " + str(result.json()["vpn"]))
             print("Fraud Score:     " + str(result.json()["fraud_score"]))
             print("Recent Abuse:    " + str(result.json()["recent_abuse"]))
 
-
-            print("country_code:    " + str(result.json()["country_code"]))
+            print("country_code:    " + str(result.json()["country_code"]) + " ( " + country_name + " )")
             print("region:          " + str(result.json()["region"]))
             print("city:            " + str(result.json()["city"]))
             print("ISP:             " + str(result.json()["ISP"]))
@@ -137,11 +131,12 @@ def ipinfo(ip):
     print("------------------------------------------------------------")
     if result.status_code == 200: 
         # Printing output 
+        
+        country_string = ""
+        try: country_string = " ( " + pycountry.countries.get(alpha_2=str(result.json()["country"])).name + " ) "
+        except: pass
 
-
-        # print(str(result.json()))
-
-        try:     print("country:    " + str(result.json()["country"]))
+        try:     print("country:    " + str(result.json()["country"])  + country_string )
         except: pass
 
         try:     print("region:     " + str(result.json()["region"]))
@@ -214,18 +209,19 @@ def AbuseIPDP(ip):
 
     response = requests.request(method='GET', url=url, headers=headers, params=querystring)
 
-
     # Printing output 
     # print("www.abuseipdb.com")
     print(f"{bcolors.SERVICE_TITLE}www.abuseipdb.com{bcolors.ENDC}")
 
     print("------------------------------------------------------------")
     if response.status_code == 200:
+
+        country_name = pycountry.countries.get(alpha_2=str(response.json()["data"]["countryCode"])).name
         
         print("hostnames:       " + str(response.json()["data"]["hostnames"]))
         print("Abuse score:     " + str(response.json()["data"]["abuseConfidenceScore"]))
         print("usageType        " + str(response.json()["data"]["usageType"]))
-        print("Country code:    " + str(response.json()["data"]["countryCode"]))
+        print("Country code:    " + str(response.json()["data"]["countryCode"]) + " ( " + country_name + " )")
         print("ISP:             " + str(response.json()["data"]["isp"]))
         print("totalReports:    " + str(response.json()["data"]["totalReports"]))
         print("Last report:     " + str(response.json()["data"]["lastReportedAt"]))
@@ -241,8 +237,6 @@ def AbuseIPDP(ip):
 # getipintel.net
 def gipi(ip):
     string = "http://check.getipintel.net/check.php?ip={}&contact=peter.man@gmail.com&format=json&flags=m&oflags=bci".format(ip)
-
-
     response = requests.get(string)
 
     # Printing output 
@@ -250,9 +244,12 @@ def gipi(ip):
     print(f"{bcolors.SERVICE_TITLE}www.getipintel.net{bcolors.ENDC}")
     print("------------------------------------------------------------")
     try: 
+
+        country_name = pycountry.countries.get(alpha_2= str(response.json()["Country"])).name
+
         if response.status_code == 200: 
             print("Abuse score:         " + str(response.json()["result"]))
-            print("Country Code:        " + str(response.json()["Country"]))
+            print("Country Code:        " + str(response.json()["Country"]) + " ( " + country_name + " )")
             print("iCloud relay:        " + str(response.json()["iCloudRelayEgress"]))
             print("Bad IP:              " + str(response.json()["BadIP"]))
         else: 
@@ -287,16 +284,22 @@ def historyCheck(ip):
 
     print("This IP has been checked " + str(count) + " times")
     print("")
-    
-
-
 
 
 # Gets the history and stores it in RAM 
 history = get_history()
 
-# Mode that allows the user to enter a new IP repeatedly 
+# Exits the program, rather than error if you don't give it any args
+if len(sys.argv) == 1: 
+    print("Argument not found")
+    print()
+    print("Enter an IP address to look up that IP address")
+    print("Enter 'i' to enter interactive mode")
+    print("Enter 'dump' to see the history")
+    print()
+    exit()
 
+# Mode that allows the user to enter a new IP repeatedly 
 if sys.argv[1] == "i": # enter interactive mode
 
     print("Interactive mode. type 'EXIT' to exit")
@@ -320,8 +323,6 @@ if sys.argv[1] == "i": # enter interactive mode
             AbuseIPDP(ip)
             gipi(ip)
             historyCheck(ip)
-
-
             
         else: 
             print("IP invalid")
@@ -329,21 +330,6 @@ if sys.argv[1] == "i": # enter interactive mode
 # Dumps the known IP addresses 
 if sys.argv[1] == "dump": 
     print(get_history())
-
-    
-
-if sys.argv[1] == "test":
-
-    add_ip_to_history("Test 1")
-    add_ip_to_history("Test 2")
-    add_ip_to_history("Test 3")
-    add_ip_to_history("Test 4")
-
-
-    print(get_history())
-    
-
-    print(historyCheck("1.1.1.1"))
 
 
 else:
@@ -355,6 +341,3 @@ else:
     gipi(ip)
 
     add_ip_to_history(ip)
-
-
-
