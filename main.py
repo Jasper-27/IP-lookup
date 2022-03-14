@@ -41,6 +41,17 @@ history_file_name = "History.txt"
 history = []
 
 
+# Get the country name, and return blank string if it doesn't work 
+def get_country_name(country_code): 
+    result = ""
+    try: 
+        result = pycountry.countries.get(alpha_2=str(country_code)).name
+    except: 
+        pass
+
+    return result
+
+
 # Get the known IP addresses from a file 
 def get_history(): 
     try: 
@@ -88,7 +99,9 @@ def ipqs(ip):
     if result.status_code == 200: 
         if result.json()["success"] == True: 
 
-            country_name = pycountry.countries.get(alpha_2=str(result.json()["country_code"])).name
+            # country_name = pycountry.countries.get(alpha_2=str(result.json()["country_code"])).name
+
+            country_name = get_country_name(result.json()["country_code"])
 
             print("VPN:             " + str(result.json()["vpn"]))
             print("Fraud Score:     " + str(result.json()["fraud_score"]))
@@ -133,50 +146,50 @@ def ipinfo(ip):
         # Printing output 
         
         country_string = ""
-        try: country_string = " ( " + pycountry.countries.get(alpha_2=str(result.json()["country"])).name + " ) "
+        try: country_string = " ( " + get_country_name(result.json()["country"]) + " )"
         except: pass
 
-        try:     print("country:    " + str(result.json()["country"])  + country_string )
+        try:    print("country:    " + str(result.json()["country"])  + country_string )
         except: pass
 
-        try:     print("region:     " + str(result.json()["region"]))
+        try:    print("region:     " + str(result.json()["region"]))
         except: pass
 
-        try:    print("city:        " + str(result.json()["city"]))
+        try:    print("city:       " + str(result.json()["city"]))
         except: pass
 
-        try:     print("org:        " + str(result.json()["org"]))
+        try:    print("org:        " + str(result.json()["org"]))
         except: pass
 
-        try:     print("hostname:   " + str(result.json()["hostname"]))
+        try:    print("hostname:   " + str(result.json()["hostname"]))
         except: pass
         
-        try:     print("domain:     " + str(result.json()["asn"]["domain"]))
+        try:    print("domain:     " + str(result.json()["asn"]["domain"]))
         except: pass
         
-        try:     print("route:      " + str(result.json()["asn"]["route"]))
+        try:    print("route:      " + str(result.json()["asn"]["route"]))
         except: pass
         
-        try:     print("type:       " + str(result.json()["asn"]["type"]))
+        try:    print("type:       " + str(result.json()["asn"]["type"]))
         except: pass
 
         # Pro
-        try:     print("vpn:        " + str(result.json()["privacy"]["vpn"])) 
+        try:    print("vpn:        " + str(result.json()["privacy"]["vpn"])) 
         except: pass
 
-        try:     print("proxy:      " + str(result.json()["privacy"]["proxy"])) 
+        try:    print("proxy:      " + str(result.json()["privacy"]["proxy"])) 
         except: pass
 
-        try:     print("tor:        " + str(result.json()["privacy"]["tor"])) 
+        try:    print("tor:        " + str(result.json()["privacy"]["tor"])) 
         except: pass
 
-        try:     print("relay:      " + str(result.json()["privacy"]["relay"])) 
+        try:    print("relay:      " + str(result.json()["privacy"]["relay"])) 
         except: pass
 
-        try:     print("hosting:    " + str(result.json()["privacy"]["hosting"])) 
+        try:    print("hosting:    " + str(result.json()["privacy"]["hosting"])) 
         except: pass
 
-        try:     print("service:    " + str(result.json()["privacy"]["service"])) 
+        try:    print("service:    " + str(result.json()["privacy"]["service"])) 
         except: pass
 
     elif result.status_code == 404: 
@@ -216,12 +229,13 @@ def AbuseIPDP(ip):
     print("------------------------------------------------------------")
     if response.status_code == 200:
 
-        country_name = pycountry.countries.get(alpha_2=str(response.json()["data"]["countryCode"])).name
+        # country_name = pycountry.countries.get(alpha_2=str(response.json()["data"]["countryCode"])).name
+        country_name = " ( " + get_country_name(response.json()["data"]["countryCode"]) + " )"
         
         print("hostnames:       " + str(response.json()["data"]["hostnames"]))
         print("Abuse score:     " + str(response.json()["data"]["abuseConfidenceScore"]))
         print("usageType        " + str(response.json()["data"]["usageType"]))
-        print("Country code:    " + str(response.json()["data"]["countryCode"]) + " ( " + country_name + " )")
+        print("Country code:    " + str(response.json()["data"]["countryCode"]) + country_name )
         print("ISP:             " + str(response.json()["data"]["isp"]))
         print("totalReports:    " + str(response.json()["data"]["totalReports"]))
         print("Last report:     " + str(response.json()["data"]["lastReportedAt"]))
@@ -245,7 +259,8 @@ def gipi(ip):
     print("------------------------------------------------------------")
     try: 
 
-        country_name = pycountry.countries.get(alpha_2= str(response.json()["Country"])).name
+        # country_name = pycountry.countries.get(alpha_2= str(response.json()["Country"])).name
+        country_name = get_country_name(response.json()["Country"])
 
         if response.status_code == 200: 
             print("Abuse score:         " + str(response.json()["result"]))
