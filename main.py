@@ -279,9 +279,6 @@ def gipi(ip):
 # Check the IP address is Valid 
 def ipCheck(ip):
 
-    if ip.lower() == "exit": 
-        return False 
-
     try:
         socket.inet_aton(ip) # Checks to see if the IP is valid 
         # legal
@@ -322,12 +319,15 @@ if sys.argv[1] == "i": # enter interactive mode
 
         ip = input("Enter IP: ")
 
+        # Exit the program if the user enters exit
+        if ip.lower() == "exit": 
+            exit()
+
         # Make sure the IP address is valid 
         skip = False 
         skip = ipCheck(ip)
 
-        if ip.lower() == "exit": 
-            break
+        
         
         if skip == False: 
 
