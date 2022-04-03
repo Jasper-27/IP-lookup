@@ -5,6 +5,7 @@ import requests
 import csv
 import socket
 import pycountry
+import ipaddress 
 
 
 # Colors 
@@ -278,13 +279,10 @@ def gipi(ip):
 
 # Check the IP address is Valid 
 def ipCheck(ip):
-
-    try:
-        socket.inet_aton(ip) # Checks to see if the IP is valid 
-        # legal
-    except socket.error:
-        # Not legal
-        return True 
+    try: 
+        ipaddress.ip_address(ip)
+    except: 
+        return True
 
     return False 
 
