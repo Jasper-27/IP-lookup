@@ -20,7 +20,20 @@ class bcolors:
     UNDERLINE = '\033[4m'
     ENDC = '\033[0m'
 
+# Removes the colors if on Windows. As CMD and Powershell suck. 
+if sys.platform == 'win32':
 
+    bcolors.SERVICE_TITLE = ''
+    bcolors.OKBLUE = ''
+    bcolors.OKCYAN = ''
+    bcolors.OKGREEN = ''
+    bcolors.WARNING = ''
+    bcolors.FAIL = ''
+    bcolors. BOLD = ''
+    bcolors.UNDERLINE = ''
+    bcolors.ENDC = ''
+    
+   
 # Reading in the API keys 
 ipqs_key = ""
 ipinfo_key = ""
