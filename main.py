@@ -111,14 +111,13 @@ def historyCheck(ip):
     print("This IP has been checked " + str(count) + " times")
     print("")
 
-# Extracts the IP address from a stirng (trimming out any other bits)
+# Extracts the IP address from a stirng (trimming out any other bits)   Compatable with ipv4 and ipv6
 def extract_ip_address(string):
-    pattern = r'\b(?:\d{1,3}\.){3}\d{1,3}\b'  # Regular expression pattern for matching an IP address
+    pattern = r"\b(?:\d{1,3}\.){3}\d{1,3}\b|\b(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}\b" # Regular expression pattern for matching an IP address
     match = re.search(pattern, string)
     if match:
         return match.group()
     else:
-        print("ERROR: Cannot parse out an IP address")
         return None
 
 # Gets the history and stores it in RAM 
@@ -366,7 +365,7 @@ def interactive_loop():
             else: 
                 print("IP invalid")
 
-        else: print("Could not parse out IP address")
+        else: print("ERROR: Can't parse IP address")
         
         interactive_loop() # and back round again. 
 
