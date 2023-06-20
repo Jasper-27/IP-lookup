@@ -326,47 +326,54 @@ def gipi(ip):
 
 def interactive_loop():
 
-    input_string = input("Enter IP: ")
+    try: 
+    
+        input_string = input("Enter IP: ")
 
-    # Exit the program if the user enters exit
-    if input_string.lower() == "exit": 
+        # Exit the program if the user enters exit
+        if input_string.lower() == "exit": 
+            exit()
+
+        # Clears the screen 
+        if input_string.lower() == "clear": 
+            if name == 'nt':
+                _ = system('cls')
+            else:
+                _ = system('clear')
+
+            interactive_loop() # and start again 
+        
+        ip = extract_ip_address(input_string) # Extract IP address from string
+        if ip != None:
+                
+            
+            # Make sure the IP address is valid 
+            skip = False 
+            skip = ipCheck(ip)
+
+            
+            
+            if skip == False: 
+
+                add_ip_to_history(ip)
+
+                ipqs(ip)
+                ipinfo(ip)
+                AbuseIPDP(ip)
+                gipi(ip)
+                historyCheck(ip)
+                
+            else: 
+                print("IP invalid")
+
+        else: print("Could not parse out IP address")
+        
+        interactive_loop() # and back round again. 
+
+    # Cleanly exits with a Ctrl+c
+    except KeyboardInterrupt: 
         exit()
-
-    # Clears the screen 
-    if input_string.lower() == "clear": 
-        if name == 'nt':
-            _ = system('cls')
-        else:
-            _ = system('clear')
-
-        interactive_loop() # and start again 
     
-    ip = extract_ip_address(input_string) # Extract IP address from string
-    if ip != None:
-            
-        
-        # Make sure the IP address is valid 
-        skip = False 
-        skip = ipCheck(ip)
-
-        
-        
-        if skip == False: 
-
-            add_ip_to_history(ip)
-
-            ipqs(ip)
-            ipinfo(ip)
-            AbuseIPDP(ip)
-            gipi(ip)
-            historyCheck(ip)
-            
-        else: 
-            print("IP invalid")
-
-    else: print("Could not parse out IP address")
-    
-    interactive_loop() # and back round again. 
 
 # Exits the program, rather than error if you don't give it any args
 if len(sys.argv) == 1: 
