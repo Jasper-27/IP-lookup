@@ -52,22 +52,6 @@ with open('keys.csv', newline='') as csvfile:
 
 # Section for the History feature 
 
-history_file_name = "History.txt"
-
-history = []
-
-
-# Get the country name, and return blank string if it doesn't work 
-def get_country_name(country_code): 
-    result = ""
-    try: 
-        result = pycountry.countries.get(alpha_2=str(country_code)).name
-    except: 
-        pass
-
-    return result
-
-
 # Get the known IP addresses from a file 
 def get_history(): 
     try: 
@@ -84,6 +68,24 @@ def get_history():
         open(history_file_name, 'a').close()
 
         get_history()
+
+history_file_name = "History.txt"
+history = []
+
+# Gets the history and stores it in RAM 
+history = get_history()
+
+
+# Get the country name, and return blank string if it doesn't work 
+def get_country_name(country_code): 
+    result = ""
+    try: 
+        result = pycountry.countries.get(alpha_2=str(country_code)).name
+    except: 
+        pass
+
+    return result
+
 
 # Add an IP address to history (array, and file)
 def add_ip_to_history(IP): 
@@ -116,12 +118,16 @@ def extract_ip_address(string):
     pattern = r"\b(?:\d{1,3}\.){3}\d{1,3}\b|\b(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}\b" # Regular expression pattern for matching an IP address
     match = re.search(pattern, string)
     if match:
+        if match.group() != string: 
+            print("IP ADDRESS: " + match.group())
+
         return match.group()
     else:
         return None
 
-# Gets the history and stores it in RAM 
-history = get_history()
+###########################################
+##          IP Checking services         ##
+###########################################
 
 # www.ipqualityscore.com
 def ipqs(ip):
@@ -341,17 +347,19 @@ def interactive_loop():
                 _ = system('clear')
 
             interactive_loop() # and start again 
+
+        # Handles not having any value 
+        if input_string.strip() == "":
+            interactive_loop()
         
         ip = extract_ip_address(input_string) # Extract IP address from string
+
         if ip != None:
-                
-            
+        
             # Make sure the IP address is valid 
             skip = False 
             skip = ipCheck(ip)
 
-            
-            
             if skip == False: 
 
                 add_ip_to_history(ip)
@@ -389,8 +397,6 @@ if sys.argv[1] == "i": # enter interactive mode
 
     print("Interactive mode. type 'EXIT' to exit")
     interactive_loop()
-
-
 
 # Dumps the known IP addresses 
 if sys.argv[1] == "dump": 
