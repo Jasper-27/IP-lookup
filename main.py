@@ -6,6 +6,8 @@ import csv
 import socket
 import pycountry
 import ipaddress 
+import re
+from os import system, name
 
 
 # Colors 
@@ -50,22 +52,6 @@ with open('keys.csv', newline='') as csvfile:
 
 # Section for the History feature 
 
-history_file_name = "History.txt"
-
-history = []
-
-
-# Get the country name, and return blank string if it doesn't work 
-def get_country_name(country_code): 
-    result = ""
-    try: 
-        result = pycountry.countries.get(alpha_2=str(country_code)).name
-    except: 
-        pass
-
-    return result
-
-
 # Get the known IP addresses from a file 
 def get_history(): 
     try: 
@@ -83,6 +69,24 @@ def get_history():
 
         get_history()
 
+history_file_name = "History.txt"
+history = []
+
+# Gets the history and stores it in RAM 
+history = get_history()
+
+
+# Get the country name, and return blank string if it doesn't work 
+def get_country_name(country_code): 
+    result = ""
+    try: 
+        result = pycountry.countries.get(alpha_2=str(country_code)).name
+    except: 
+        pass
+
+    return result
+
+
 # Add an IP address to history (array, and file)
 def add_ip_to_history(IP): 
     history.append(IP)
@@ -90,6 +94,40 @@ def add_ip_to_history(IP):
     history_file.write(IP + "\n")
 
     history_file.close() # Good boys close their files 
+
+    # Check the IP address is Valid 
+def ipCheck(ip):
+    try: 
+        ipaddress.ip_address(ip)
+    except: 
+        return True
+
+    return False 
+
+# Checks how many times the IP address has been checked
+def historyCheck(ip): 
+    print(f"{bcolors.SERVICE_TITLE}History{bcolors.ENDC}")
+    print("------------------------------------------------------------")
+    count = get_history().count(ip)
+
+    print("This IP has been checked " + str(count) + " times")
+    print("")
+
+# Extracts the IP address from a stirng (trimming out any other bits)   Compatable with ipv4 and ipv6
+def extract_ip_address(string):
+    pattern = r"\b(?:\d{1,3}\.){3}\d{1,3}\b|\b(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}\b" # Regular expression pattern for matching an IP address
+    match = re.search(pattern, string)
+    if match:
+        if match.group() != string: 
+            print("IP ADDRESS: " + match.group())
+
+        return match.group()
+    else:
+        return None
+
+###########################################
+##          IP Checking services         ##
+###########################################
 
 # www.ipqualityscore.com
 def ipqs(ip):
@@ -290,27 +328,59 @@ def gipi(ip):
     print()
     print()
 
-# Check the IP address is Valid 
-def ipCheck(ip):
+
+def interactive_loop():
+
     try: 
-        ipaddress.ip_address(ip)
-    except: 
-        return True
+    
+        input_string = input("Enter IP: ")
 
-    return False 
+        # Exit the program if the user enters exit
+        if input_string.lower() == "exit": 
+            exit()
 
-# Checks how many times the IP address has been checked
-def historyCheck(ip): 
-    print(f"{bcolors.SERVICE_TITLE}History{bcolors.ENDC}")
-    print("------------------------------------------------------------")
-    count = get_history().count(ip)
+        # Clears the screen 
+        if input_string.lower() == "clear": 
+            if name == 'nt':
+                _ = system('cls')
+            else:
+                _ = system('clear')
 
-    print("This IP has been checked " + str(count) + " times")
-    print("")
+            interactive_loop() # and start again 
 
+        # Handles not having any value 
+        if input_string.strip() == "":
+            interactive_loop()
+        
+        ip = extract_ip_address(input_string) # Extract IP address from string
 
-# Gets the history and stores it in RAM 
-history = get_history()
+        if ip != None:
+        
+            # Make sure the IP address is valid 
+            skip = False 
+            skip = ipCheck(ip)
+
+            if skip == False: 
+
+                add_ip_to_history(ip)
+
+                ipqs(ip)
+                ipinfo(ip)
+                AbuseIPDP(ip)
+                gipi(ip)
+                historyCheck(ip)
+                
+            else: 
+                print("IP invalid")
+
+        else: print("ERROR: Can't parse IP address")
+        
+        interactive_loop() # and back round again. 
+
+    # Cleanly exits with a Ctrl+c
+    except KeyboardInterrupt: 
+        exit()
+    
 
 # Exits the program, rather than error if you don't give it any args
 if len(sys.argv) == 1: 
@@ -326,32 +396,7 @@ if len(sys.argv) == 1:
 if sys.argv[1] == "i": # enter interactive mode
 
     print("Interactive mode. type 'EXIT' to exit")
-    while(True): 
-
-        ip = input("Enter IP: ")
-
-        # Exit the program if the user enters exit
-        if ip.lower() == "exit": 
-            exit()
-
-        # Make sure the IP address is valid 
-        skip = False 
-        skip = ipCheck(ip)
-
-        
-        
-        if skip == False: 
-
-            add_ip_to_history(ip)
-
-            ipqs(ip)
-            ipinfo(ip)
-            AbuseIPDP(ip)
-            gipi(ip)
-            historyCheck(ip)
-            
-        else: 
-            print("IP invalid")
+    interactive_loop()
 
 # Dumps the known IP addresses 
 if sys.argv[1] == "dump": 
